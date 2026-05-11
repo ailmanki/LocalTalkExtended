@@ -248,6 +248,15 @@ function GUIVoiceChat:Update(delta_time)
 	if not player_info then return end
 	local local_team = player_info.teamNumber
 
+	-- While the local client is actively recording (or within the release
+	-- delay), the recording voice channel can briefly report Invalid between
+	-- voice packets, especially with VoiceRecordStartEntity (local talk).
+	-- Skip the channel-mismatch reset for the local client during this
+	-- window, otherwise the chat bar flickers on every dropout.
+	local localRecording =
+		self.recordBind ~= nil or
+		(self.recordEndTime and self.recordEndTime > time)
+
 	for i = 1, #chat_bars do
 		local bar = chat_bars[i]
 		local id = bar.player
@@ -255,7 +264,8 @@ function GUIVoiceChat:Update(delta_time)
 			local pie = Shared.GetEntity(id)
 			if pie then
 				local channel = GetVoiceChannel(pie.clientId)
-				if channel ~= pie.voice_channel then
+				local keepBar = localRecording and pie.clientId == local_client
+				if not keepBar and channel ~= pie.voice_channel then
 					-- If the channel isn't the global one, i.e. if it's proximity,
 					-- we also need the network message to tell us what kind of
 					-- local voice chat it is, so we delay the bar here.
