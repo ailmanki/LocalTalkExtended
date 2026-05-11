@@ -1,4 +1,4 @@
-name        = "Local Talk"
+name        = "Meteru's Local Talk Extended Fork"
 source_dir  = "source"
 output_dir  = "src"
 description = [=[
