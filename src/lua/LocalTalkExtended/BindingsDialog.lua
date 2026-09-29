@@ -1,6 +1,7 @@
 local defaults = debug.getupvaluex(GetDefaultInputValue, "defaults")
 table.insert(defaults, {"LocalVoiceChat", "None"})
 table.insert(defaults, {"LocalVoiceChatTeam", "None"})
+table.insert(defaults, {"LocalVoiceChatCom", "None"})
 
 local bindings = BindingsUI_GetBindingsData()
 for i, v in ipairs {
